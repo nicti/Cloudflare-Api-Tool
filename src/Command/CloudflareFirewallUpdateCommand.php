@@ -113,7 +113,7 @@ class CloudflareFirewallUpdateCommand extends Command
                 if ($found) {
                     //Perform update
                     if ($found['action'] !== $parsedConfig['action'] || $found['filter']['expression'] !== $parsedConfig['expression']) {
-                        $this->httpClient->request(
+                        $fwResponse = $this->httpClient->request(
                             'PUT',
                             'https://api.cloudflare.com/client/v4/zones/'.$target.'/firewall/rules/'.$found['id'],
                             [
@@ -131,7 +131,7 @@ class CloudflareFirewallUpdateCommand extends Command
                                 ]
                             ]
                         );
-                        $this->httpClient->request(
+                        $filterResponse = $this->httpClient->request(
                             'PUT',
                             'https://api.cloudflare.com/client/v4/zones/'.$target.'/filters/'.$found['filter']['id'],
                             [
@@ -143,6 +143,16 @@ class CloudflareFirewallUpdateCommand extends Command
                                 ]
                             ]
                         );
+                        if ($fwResponse->getStatusCode() === 400) {
+                            $error = $fwResponse->toArray(false)['errors'][0]['message'];
+                            $output->writeln('<error>Update of rule '.$key.' failed for zone '.$target.': '.$error.'</error>');
+                            continue;
+                        }
+                        if ($filterResponse->getStatusCode() === 400) {
+                            $error = $filterResponse->toArray(false)['errors'][0]['message'];
+                            $output->writeln('<error>Update of rule '.$key.' failed for zone '.$target.': '.$error.'</error>');
+                            continue;
+                        }
                         $output->writeln('<info>Updated rule '.$key.' for zone '.$target.'</info>');
                     } else {
                         $output->writeln('<info>No update required for rule '.$key.' for zone '.$target.'</info>');
@@ -165,7 +175,11 @@ class CloudflareFirewallUpdateCommand extends Command
                             ]]
                         ]
                     );
-                    print_r($response->getContent(false));
+                    if ($response->getStatusCode() === 400) {
+                        $error = $response->toArray(false)['errors'][0]['message'];
+                        $output->writeln('<error>Creation of rule '.$key.' failed for zone '.$target.': '.$error.'</error>');
+                        continue;
+                    }
                     $output->writeln('<info>Created rule '.$key.' for zone '.$target.'</info>');
                 }
             }
