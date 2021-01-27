@@ -1,6 +1,4 @@
 {
-    "name": "nicti/cloudflare-api-tool",
-    "license": "proprietary",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
@@ -59,8 +57,5 @@
             "allow-contrib": false,
             "require": "5.2.*"
         }
-    },
-    "bin": [
-        "bin/cloudflareApiTool"
-    ]
+    }
 }
