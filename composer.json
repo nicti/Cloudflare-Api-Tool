@@ -61,6 +61,6 @@
         }
     },
     "bin": [
-        "bin/console"
+        "bin/cloudflareApiTool"
     ]
 }
