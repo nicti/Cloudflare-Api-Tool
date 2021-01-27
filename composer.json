@@ -1,5 +1,5 @@
 {
-    "name": "nicti/cloudflareApiTool",
+    "name": "nicti/cloudflare-api-tool",
     "license": "proprietary",
     "minimum-stability": "dev",
     "prefer-stable": true,
