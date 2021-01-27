@@ -149,7 +149,7 @@ class CloudflareFirewallUpdateCommand extends Command
                     }
                 } else {
                     //Perform create
-                    $this->httpClient->request(
+                    $response = $this->httpClient->request(
                         'POST',
                         'https://api.cloudflare.com/client/v4/zones/'.$target.'/firewall/rules',
                         [
@@ -165,6 +165,7 @@ class CloudflareFirewallUpdateCommand extends Command
                             ]]
                         ]
                     );
+                    print_r($response->getContent(false));
                     $output->writeln('<info>Created rule '.$key.' for zone '.$target.'</info>');
                 }
             }
